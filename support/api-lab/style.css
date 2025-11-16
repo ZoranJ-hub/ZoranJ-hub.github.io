@@ -18,3 +18,21 @@ code[class*="language-"] { font-family: Menlo, Monaco, 'Courier New', monospace;
 .token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #22863a; }
 .token.function { color: #6f42c1; }
 
+/* Prism toolbar / copy-to-clipboard tweaks */
+.prism-toolbar {
+	background: rgba(0,0,0,0.05);
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	padding: 0 0.5rem;
+}
+.prism-toolbar .toolbar-item button {
+	background: transparent;
+	border: 0;
+	color: #222;
+	font-size: 0.85rem;
+}
+
+/* Mermaid container */
+.mermaid { max-width: 100%; margin: 1rem 0; }
+
+
