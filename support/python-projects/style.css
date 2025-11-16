@@ -37,6 +37,21 @@
   margin: 0.5rem 0 0 0;
 }
 
+/* Card Images */
+.python-card .image.fit {
+  margin: 0 0 1rem 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.python-card .image.fit img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  background: #f0f0f0;
+}
+
 /* Badge Styling */
 .badges {
   display: flex;
@@ -159,3 +174,4 @@ h4 {
     margin: 1.5rem 0;
   }
 }
+

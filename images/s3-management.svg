@@ -1,0 +1,66 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="300" y="40" font-size="32" font-weight="bold" fill="#00d4ff" text-anchor="middle" font-family="Arial, sans-serif">S3 Data Management</text>
+  
+  <!-- S3 Buckets -->
+  <g id="bucket1">
+    <rect x="40" y="90" width="90" height="90" fill="#569a31" rx="8"/>
+    <text x="85" y="125" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">S3</text>
+    <text x="85" y="145" font-size="10" fill="white" text-anchor="middle" font-family="Arial">Encrypted</text>
+  </g>
+  
+  <g id="bucket2">
+    <rect x="160" y="90" width="90" height="90" fill="#569a31" rx="8"/>
+    <text x="205" y="125" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">S3</text>
+    <text x="205" y="145" font-size="10" fill="white" text-anchor="middle" font-family="Arial">Versioned</text>
+  </g>
+  
+  <!-- Lock Icon for Security -->
+  <g id="lock">
+    <rect x="280" y="110" width="40" height="50" fill="none" stroke="#ff6b6b" stroke-width="2" rx="2"/>
+    <path d="M 290 110 L 290 100 Q 290 90 300 90 Q 310 90 310 100 L 310 110" fill="none" stroke="#ff6b6b" stroke-width="2"/>
+    <circle cx="300" cy="130" r="3" fill="#ff6b6b"/>
+  </g>
+  
+  <!-- IAM Role -->
+  <rect x="360" y="90" width="90" height="90" fill="#4b9bff" rx="8"/>
+  <text x="405" y="125" font-size="13" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">IAM</text>
+  <text x="405" y="145" font-size="11" fill="white" text-anchor="middle" font-family="Arial">Policies</text>
+  
+  <!-- KMS Encryption -->
+  <rect x="480" y="90" width="80" height="90" fill="#ff9900" rx="8"/>
+  <text x="520" y="125" font-size="13" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">KMS</text>
+  <text x="520" y="145" font-size="11" fill="white" text-anchor="middle" font-family="Arial">Encrypt</text>
+  
+  <!-- Connection lines -->
+  <line x1="130" y1="135" x2="160" y2="135" stroke="#00d4ff" stroke-width="2"/>
+  <line x1="250" y1="135" x2="280" y2="135" stroke="#00d4ff" stroke-width="2"/>
+  <line x1="320" y1="135" x2="360" y2="135" stroke="#ff6b6b" stroke-width="2"/>
+  <line x1="450" y1="135" x2="480" y2="135" stroke="#00d4ff" stroke-width="2"/>
+  
+  <!-- Features Section -->
+  <rect x="40" y="220" width="520" height="150" fill="#1a1a1a" rx="8" stroke="#00d4ff" stroke-width="2"/>
+  <text x="55" y="240" font-size="14" font-weight="bold" fill="#00d4ff" font-family="Arial">Security & Compliance Features</text>
+  
+  <!-- Left column -->
+  <text x="55" y="265" font-size="12" fill="#cccccc" font-family="Arial">✓ SSE-S3 & KMS Encryption</text>
+  <text x="55" y="285" font-size="12" fill="#cccccc" font-family="Arial">✓ Versioning & Audit Trails</text>
+  <text x="55" y="305" font-size="12" fill="#cccccc" font-family="Arial">✓ Access Logging</text>
+  <text x="55" y="325" font-size="12" fill="#cccccc" font-family="Arial">✓ Block Public Access</text>
+  
+  <!-- Right column -->
+  <text x="320" y="265" font-size="12" fill="#cccccc" font-family="Arial">✓ Lifecycle Policies</text>
+  <text x="320" y="285" font-size="12" fill="#cccccc" font-family="Arial">✓ Cost Optimization</text>
+  <text x="320" y="305" font-size="12" fill="#cccccc" font-family="Arial">✓ CloudWatch Monitoring</text>
+  <text x="320" y="325" font-size="12" fill="#cccccc" font-family="Arial">✓ SNS Alerts</text>
+</svg>
