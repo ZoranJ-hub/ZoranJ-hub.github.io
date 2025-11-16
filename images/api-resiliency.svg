@@ -1,0 +1,65 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Title -->
+  <text x="300" y="40" font-size="32" font-weight="bold" fill="#00d4ff" text-anchor="middle" font-family="Arial, sans-serif">API Resiliency</text>
+  
+  <!-- Client -->
+  <rect x="50" y="100" width="80" height="80" fill="#4b9bff" rx="8"/>
+  <text x="90" y="130" font-size="12" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">Client</text>
+  <text x="90" y="150" font-size="10" fill="white" text-anchor="middle" font-family="Arial">Request</text>
+  
+  <!-- API Gateway -->
+  <rect x="180" y="100" width="80" height="80" fill="#ff9900" rx="8"/>
+  <text x="220" y="130" font-size="12" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">Gateway</text>
+  <text x="220" y="150" font-size="10" fill="white" text-anchor="middle" font-family="Arial">Routing</text>
+  
+  <!-- Circuit Breaker -->
+  <rect x="310" y="100" width="80" height="80" fill="#569a31" rx="8"/>
+  <text x="350" y="130" font-size="12" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">Circuit</text>
+  <text x="350" y="150" font-size="10" fill="white" text-anchor="middle" font-family="Arial">Breaker</text>
+  
+  <!-- Downstream Service -->
+  <rect x="440" y="100" width="80" height="80" fill="#ff3333" rx="8"/>
+  <text x="480" y="130" font-size="12" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">Service</text>
+  <text x="480" y="150" font-size="10" fill="white" text-anchor="middle" font-family="Arial">Down?</text>
+  
+  <!-- Connection arrows -->
+  <line x1="130" y1="140" x2="180" y2="140" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="260" y1="140" x2="310" y2="140" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="390" y1="140" x2="440" y2="140" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arrowhead-red)"/>
+  
+  <!-- Fallback/Monitoring -->
+  <rect x="50" y="240" width="500" height="130" fill="#1a1a1a" rx="8" stroke="#00d4ff" stroke-width="2"/>
+  <text x="60" y="260" font-size="14" font-weight="bold" fill="#00d4ff" font-family="Arial">Resilience4j Implementation</text>
+  
+  <!-- Left column -->
+  <text x="60" y="285" font-size="12" fill="#cccccc" font-family="Arial">✓ @CircuitBreaker Annotation</text>
+  <text x="60" y="305" font-size="12" fill="#cccccc" font-family="Arial">✓ Fallback Handlers</text>
+  <text x="60" y="325" font-size="12" fill="#cccccc" font-family="Arial">✓ Retry Logic</text>
+  <text x="60" y="345" font-size="12" fill="#cccccc" font-family="Arial">✓ Timeout Protection</text>
+  
+  <!-- Right column -->
+  <text x="330" y="285" font-size="12" fill="#cccccc" font-family="Arial">✓ Health Monitoring</text>
+  <text x="330" y="305" font-size="12" fill="#cccccc" font-family="Arial">✓ Metrics Tracking</text>
+  <text x="330" y="325" font-size="12" fill="#cccccc" font-family="Arial">✓ Graceful Degradation</text>
+  <text x="330" y="345" font-size="12" fill="#cccccc" font-family="Arial">✓ Spring Boot Integration</text>
+  
+  <!-- Arrow marker definitions -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#00d4ff" />
+    </marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ff6b6b" />
+    </marker>
+  </defs>
+</svg>

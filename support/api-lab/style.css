@@ -3,6 +3,8 @@
 .lead { font-weight: 600; color: #2b3a42; }
 .api-cards { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.5rem; }
 .api-cards .card { background:#fff; border:1px solid #eee; padding:1.25rem; flex:1 1 18rem; box-shadow:0 6px 18px rgba(0,0,0,0.06); border-radius:6px; }
+.api-cards .card .image.fit { margin:0 -1.25rem 1rem -1.25rem; width:calc(100% + 2.5rem); height:auto; border-radius:6px 6px 0 0; overflow:hidden; }
+.api-cards .card .image.fit img { width:100%; height:auto; display:block; background:#f0f0f0; }
 .api-cards .card h4 { margin:0 0 .5rem 0; font-size:1.05rem; }
 .api-cards .card .teaser { color:#555; margin-bottom:1rem; }
 .api-cards .card .button { display:inline-block; margin-top:.5rem; }
@@ -34,5 +36,4 @@ code[class*="language-"] { font-family: Menlo, Monaco, 'Courier New', monospace;
 
 /* Mermaid container */
 .mermaid { max-width: 100%; margin: 1rem 0; }
-
 
