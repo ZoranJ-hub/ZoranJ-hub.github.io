@@ -3733,6 +3733,18 @@ input, select, textarea {
 							color: #18bfef !important;
 						}
 
+						/* Small badge for nav items (counts/indicators) */
+						#nav .badge {
+							display: inline-block;
+							background: #18bfef;
+							color: #ffffff;
+							border-radius: 999px;
+							font-size: 0.65rem;
+							padding: 0.15rem 0.45rem;
+							margin-left: 0.5rem;
+							vertical-align: middle;
+						}
+
 		#nav ul.icons {
 			-moz-flex-grow: 0;
 			-webkit-flex-grow: 0;
