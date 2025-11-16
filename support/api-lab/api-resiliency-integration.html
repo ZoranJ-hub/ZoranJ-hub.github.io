@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>API Resiliency Integration — API Lab</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/support/api-lab/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+  </head>
+  <body>
+    <header id="header"><a href="/support/api-lab/" class="logo">API Lab</a></header>
+    <main id="main" class="container">
+      <article class="post">
+        <header class="major">
+          <h2>API Resiliency Integration</h2>
+          <p class="lead">Implemented circuit breaker patterns to prevent cascading failures and provide graceful fallback behavior.</p>
+        </header>
+
+        <section>
+          <h3>Challenge</h3>
+          <p>The application experienced full outages when downstream services were slow or unresponsive, resulting in poor user experience and a spike in support tickets.</p>
+        </section>
+
+        <section>
+          <h3>Solution</h3>
+          <p>I implemented a Circuit Breaker pattern using Resilience4j to detect failure conditions, fail fast, and provide fallback responses while preserving system stability and recovery.</p>
+        </section>
+
+        <section>
+          <h3>Technical Deep Dive</h3>
+          <ol>
+            <li>Analyzed failure modes and SLA expectations for downstream services.</li>
+            <li>Introduced Resilience4j circuit breaker around the client calls with tuned thresholds for failure rate and wait duration.</li>
+            <li>Defined fallback handlers returning cached or degraded responses where appropriate.</li>
+            <li>Implemented health metrics and monitoring (Prometheus + Grafana) to observe breaker state transitions.</li>
+            <li>Used canary deployments and staged rollouts via CI/CD to validate behavior under load.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Tools & Technologies</h3>
+          <p class="badges">Java • Spring Boot • Resilience4j • Maven • Prometheus • Grafana</p>
+        </section>
+
+        <section>
+          <h3>Visuals</h3>
+          <p>Architecture Diagram:</p>
+          <img src="/support/api-lab/images/resiliency-arch.svg" alt="Resiliency architecture diagram" style="max-width:100%;height:auto;"/>
+
+          <h4>Code Snippet Example</h4>
+          <p>Spring Boot controller with Resilience4j circuit breaker and fallback handler.</p>
+          <pre><code class="language-java">// pom.xml dependency
+// &lt;dependency&gt;
+//   &lt;groupId&gt;io.github.resilience4j&lt;/groupId&gt;
+//   &lt;artifactId&gt;resilience4j-spring-boot2&lt;/artifactId&gt;
+//   &lt;version&gt;1.7.1&lt;/version&gt;
+// &lt;/dependency&gt;
+
+@RestController
+public class OrdersController {
+
+  private final OrderService orderService;
+
+  public OrdersController(OrderService orderService) {
+    this.orderService = orderService;
+  }
+
+  @GetMapping("/api/orders/{id}")
+  @CircuitBreaker(name = "ordersService", fallbackMethod = "ordersFallback")
+  public ResponseEntity&lt;Order&gt; getOrder(@PathVariable String id) {
+    return ResponseEntity.ok(orderService.fetchOrder(id));
+  }
+
+  public ResponseEntity&lt;Order&gt; ordersFallback(String id, Throwable t) {
+    // return cached or degraded response
+    Order cached = orderService.getCachedOrder(id);
+    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(cached);
+  }
+}
+</code></pre>
+
+          <h4>Circuit Breaker Configuration (example)</h4>
+          <pre><code class="language-yaml">resilience4j.circuitbreaker.instances.ordersService.registerHealthIndicator=true
+resilience4j.circuitbreaker.instances.ordersService.slidingWindowType=COUNT_BASED
+resilience4j.circuitbreaker.instances.ordersService.slidingWindowSize=20
+resilience4j.circuitbreaker.instances.ordersService.failureRateThreshold=50
+resilience4j.circuitbreaker.instances.ordersService.waitDurationInOpenState=30s
+</code></pre>
+
+          <h4>API Response Example</h4>
+          <pre><code>{
+  "status": "fallback",
+  "message": "Service temporarily unavailable, returning cached data.",
+  "data": {
+    "id": "12345",
+    "note": "stale-cache"
+  }
+}
+</code></pre>
+        </section>
+
+      </article>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  </body>
+</html>

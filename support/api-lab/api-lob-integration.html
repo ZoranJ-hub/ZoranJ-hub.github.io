@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>API LOB Integration — API Lab</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/support/api-lab/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+  </head>
+  <body>
+    <header id="header"><a href="/support/api-lab/" class="logo">API Lab</a></header>
+    <main id="main" class="container">
+      <article class="post">
+        <header class="major">
+          <h2>API LOB Integration</h2>
+          <p class="lead">Built a secure, real-time bridge to synchronize customer and order data between our core application and a Line-of-Business system.</p>
+        </header>
+
+        <section>
+          <h3>Challenge</h3>
+          <p>Manual data entry across systems caused errors and slowed operations; we needed reliable bi-directional synchronization with minimal lag.</p>
+        </section>
+
+        <section>
+          <h3>Solution</h3>
+          <p>Created a secure RESTful API bridge with schema mapping, authentication, validation, and robust error handling to ensure data integrity between systems.</p>
+        </section>
+
+        <section>
+          <h3>Technical Deep Dive</h3>
+          <ol>
+            <li>Mapped data models between systems and created a canonical internal representation.</li>
+            <li>Implemented OAuth 2.0 for authentication and scoped tokens for least privilege access.</li>
+            <li>Built transactional sync workflows with idempotency keys and retry policies for failed deliveries.</li>
+            <li>Validated payloads with JSON schema and transformation logic to handle XML/JSON conversions when required.</li>
+            <li>Instrumented logging, metrics, and dead-letter queues for failed syncs and operator remediation.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Tools & Technologies</h3>
+          <p class="badges">REST API • OAuth 2.0 • JSON • XML • Postman • Webhooks</p>
+        </section>
+
+        <section>
+          <h3>Visuals</h3>
+          <p>Architecture Diagram:</p>
+          <img src="/support/api-lab/images/lob-arch.svg" alt="LOB integration architecture diagram" style="max-width:100%;height:auto;"/>
+
+          <h4>Code Snippet Example</h4>
+          <p>Node.js webhook handler that validates payloads, enqueues a job, and uses an OAuth2 client for outbound API calls.</p>
+          <pre><code class="language-js">// webhook handler (Express)
+app.post('/webhook/orders', async (req, res) =&gt; {
+  const payload = validateOrderPayload(req.body);
+  if (!payload.valid) return res.status(400).json({ error: 'invalid payload' });
+
+  // idempotency key to avoid duplicate processing
+  const idempotencyKey = req.headers['x-idempotency-key'] || uuid.v4();
+  await enqueueSyncJob({ payload, idempotencyKey });
+  res.status(202).json({ status: 'accepted', jobId: idempotencyKey });
+});
+
+// example sync job handler
+async function processSyncJob(job) {
+  const token = await oauthClient.getAccessToken();
+  const mapped = mapToLobModel(job.payload);
+  const response = await axios.post(process.env.LOB_API + '/v1/sync', mapped, { headers: { Authorization: `Bearer ${token}` }});
+  if (response.status >= 200 &amp;&amp; response.status &lt; 300) {
+    markJobComplete(job.id);
+  } else {
+    // retry logic / dead-letter
+    handleFailedSync(job, response);
+  }
+}
+</code></pre>
+
+          <h4>Authentication & Mapping</h4>
+          <pre><code>// OAuth2 client config (example)
+const oauthClient = new OAuth2Client({
+  tokenUrl: process.env.OAUTH_TOKEN_URL,
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  scopes: ['lob.sync']
+});
+
+// mapping example (simplified)
+function mapToLobModel(source) {
+  return {
+    customerRef: source.customer.id,
+    orderRef: source.order.id,
+    amount: source.order.total_cents / 100.0,
+    items: source.order.items.map(i =&gt; ({ sku: i.sku, qty: i.qty }))
+  };
+}
+</code></pre>
+
+          <h4>API Response Example</h4>
+          <pre><code>{
+  "status": "accepted",
+  "jobId": "abc123",
+  "message": "Sync scheduled"
+}
+</code></pre>
+        </section>
+
+      </article>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  </body>
+</html>

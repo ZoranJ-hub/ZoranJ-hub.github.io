@@ -1,0 +1,32 @@
+name: HTML Validate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install html-validator-cli
+        run: |
+          npm install -g html-validator-cli@5.0.0
+
+      - name: Find and validate HTML files
+        run: |
+          set -e
+          echo "Validating HTML files under the repo..."
+          find . -type f -name '*.html' | grep -v node_modules | while read -r file; do
+            echo "Validating $file"
+            html-validator --file="$file" --verbose || exit 1
+          done

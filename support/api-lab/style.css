@@ -1,0 +1,20 @@
+/* Support styles for API Lab pages */
+.container { max-width: 72rem; margin: 2rem auto; padding: 1rem; }
+.lead { font-weight: 600; color: #2b3a42; }
+.api-cards { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.5rem; }
+.api-cards .card { background:#fff; border:1px solid #eee; padding:1.25rem; flex:1 1 18rem; box-shadow:0 6px 18px rgba(0,0,0,0.06); border-radius:6px; }
+.api-cards .card h4 { margin:0 0 .5rem 0; font-size:1.05rem; }
+.api-cards .card .teaser { color:#555; margin-bottom:1rem; }
+.api-cards .card .button { display:inline-block; margin-top:.5rem; }
+.badges { font-size:.95rem; color:#1e252d; }
+pre { background: #f6f7f9; padding: .75rem; overflow:auto; border:1px solid #e8e9eb; }
+
+/* Prism.js code block tweaks */
+pre[class*="language-"] { font-size: 0.9rem; line-height:1.5; border-radius:4px; }
+code[class*="language-"] { font-family: Menlo, Monaco, 'Courier New', monospace; }
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #6a737d; }
+.token.punctuation { color: #999; }
+.token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol { color: #005cc5; }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #22863a; }
+.token.function { color: #6f42c1; }
+
