@@ -50,15 +50,14 @@
           <div class="mermaid">
 graph LR
   Client[Client]
-  Gateway[API Gateway / Service]
-  Downstream[Downstream Service]
-  Resilience[Resilience Layer\n(Circuit Breaker, Retry, Fallback)]
-  Monitoring[Monitoring\n(Prometheus / Grafana)]
+  Gateway[API Gateway<br/>Service]
+  Downstream[Downstream<br/>Service]
+  Resilience[Resilience Layer<br/>Circuit Breaker]
+  Monitoring[Monitoring<br/>Prometheus]
   Client --> Gateway
   Gateway --> Resilience
   Resilience --> Downstream
   Resilience --> Monitoring
-  Gateway --> Monitoring
           </div>
 
           <h4>Code Snippet Example</h4>

@@ -50,15 +50,14 @@
           <div class="mermaid">
 flowchart LR
   Core[Core App]
-  Integration[Integration Service\n(Mapping, Auth, Validation)]
-  LOB[LOB System\n(Salesforce / SAP)]
-  Worker[Sync Worker\n(Queue, Retries)]
-  Monitoring[Monitoring & Alerting]
+  Integration[Integration Service<br/>Mapping & Auth]
+  LOB[LOB System<br/>Salesforce]
+  Worker[Sync Worker<br/>Queue Retries]
+  Monitoring[Monitoring<br/>& Alerting]
   Core --> Integration
   Integration --> Worker
   Worker --> LOB
   Worker --> Monitoring
-  Integration --> Monitoring
           </div>
 
           <h4>Code Snippet Example</h4>

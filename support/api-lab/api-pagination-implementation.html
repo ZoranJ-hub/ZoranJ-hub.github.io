@@ -50,11 +50,11 @@
           <div class="mermaid">
 flowchart TD
   UI[Client UI]
-  API[API Endpoint\n(cursor-based)]
-  DB[Database (Postgres)\nIndexed on (created_at, id)]
-  UI -- request with cursor --> API
-  API -- efficient WHERE query --> DB
-  API -- returns nextPageToken --> UI
+  API[API Endpoint<br/>cursor-based]
+  DB[Database Postgres<br/>Indexed on created_at id]
+  UI -->|request with cursor| API
+  API -->|efficient WHERE query| DB
+  API -->|returns nextPageToken| UI
           </div>
 
           <h4>Code Snippet Example</h4>
