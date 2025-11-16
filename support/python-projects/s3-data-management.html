@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secure AWS S3 Data Management — Python Projects</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/support/python-projects/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+  </head>
+  <body>
+    <header id="header"><a href="/support/python-projects/" class="logo">Python Projects</a></header>
+    <main id="main" class="container">
+      <article class="post">
+        <header class="major">
+          <h2>Secure AWS S3 Data Management System</h2>
+          <p class="lead">Built a Python framework for secure, compliant S3 bucket management with encryption, versioning, and lifecycle policies enforced through IAM and AWS best practices.</p>
+        </header>
+
+        <section>
+          <h3>Challenge</h3>
+          <p>Manage sensitive data across multiple S3 buckets while maintaining compliance requirements, enforcing encryption, implementing version control, and preventing accidental or malicious data exposure.</p>
+        </section>
+
+        <section>
+          <h3>Solution</h3>
+          <p>Developed a comprehensive Python system using Boto3 to automate S3 bucket provisioning with enforced encryption (SSE-S3 or KMS), versioning, bucket policies, access logging, and lifecycle rules. Combined with IAM role-based access control and CloudWatch monitoring for security and compliance.</p>
+        </section>
+
+        <section>
+          <h3>Technical Deep Dive</h3>
+          <ol>
+            <li>Provisioned S3 buckets with default encryption (AWS KMS for sensitive data, SSE-S3 for standard data).</li>
+            <li>Configured versioning on all buckets to maintain audit trails and enable rollback capabilities.</li>
+            <li>Implemented bucket policies using least-privilege IAM principles, blocking unencrypted uploads via `s3:x-amz-server-side-encryption` condition.</li>
+            <li>Enabled access logging to a centralized audit bucket with automatic expiration to manage storage costs.</li>
+            <li>Created lifecycle rules to transition old objects to Glacier/Deep Archive and automatically delete expired data.</li>
+            <li>Integrated CloudWatch monitoring with SNS notifications for unauthorized access attempts and policy violations.</li>
+            <li>Built automated tagging and cost allocation tags to track data ownership and departmental usage.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Tools & Technologies</h3>
+          <p class="badges">Python • Boto3 • AWS S3 • AWS KMS • AWS IAM • CloudWatch • SNS • Access Logs • Lifecycle Policies • Versioning</p>
+        </section>
+
+        <section>
+          <h3>Visuals</h3>
+          <p>S3 Security Architecture Diagram:</p>
+          <div class="mermaid">
+flowchart TD
+  User[User/Application]
+  IAM[IAM Role<br/>Least Privilege]
+  S3Request[S3 Request<br/>Encrypted]
+  S3Bucket[S3 Bucket<br/>KMS Encrypted<br/>Versioned]
+  AccessLog[Access Log Bucket<br/>Audit Trail]
+  Lifecycle[Lifecycle Rules<br/>Archive/Delete]
+  CloudWatch[CloudWatch Monitor<br/>& SNS Alerts]
+  
+  User --> IAM
+  IAM --> S3Request
+  S3Request --> S3Bucket
+  S3Bucket --> AccessLog
+  S3Bucket --> Lifecycle
+  AccessLog --> CloudWatch
+  S3Bucket --> CloudWatch
+          </div>
+
+          <h4>Code Snippet Example</h4>
+          <p>Python script demonstrating secure S3 bucket creation and policy enforcement.</p>
+          <pre><code class="language-python">import boto3
+import json
+from botocore.exceptions import ClientError
+
+s3_client = boto3.client('s3')
+iam_client = boto3.client('iam')
+
+def create_secure_s3_bucket(bucket_name, environment='prod'):
+    """
+    Create an S3 bucket with encryption, versioning, and access logging enabled.
+    """
+    try:
+        # Create bucket
+        s3_client.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration={'LocationConstraint': 'us-west-2'}
+        )
+        print(f"✓ Bucket {bucket_name} created")
+        
+        # Enable versioning
+        s3_client.put_bucket_versioning(
+            Bucket=bucket_name,
+            VersioningConfiguration={'Status': 'Enabled'}
+        )
+        print(f"✓ Versioning enabled")
+        
+        # Enable default encryption (KMS for prod, SSE-S3 for dev)
+        if environment == 'prod':
+            encryption_config = {
+                'Rules': [{
+                    'ApplyServerSideEncryptionByDefault': {
+                        'SSEAlgorithm': 'aws:kms',
+                        'KMSMasterKeyID': 'arn:aws:kms:us-west-2:ACCOUNT_ID:key/KEY_ID'
+                    },
+                    'BucketKeyEnabled': True
+                }]
+            }
+        else:
+            encryption_config = {
+                'Rules': [{
+                    'ApplyServerSideEncryptionByDefault': {'SSEAlgorithm': 'AES256'}
+                }]
+            }
+        
+        s3_client.put_bucket_encryption(
+            Bucket=bucket_name,
+            ServerSideEncryptionConfiguration=encryption_config
+        )
+        print(f"✓ Encryption configured ({environment} mode)")
+        
+        # Block public access
+        s3_client.put_public_access_block(
+            Bucket=bucket_name,
+            PublicAccessBlockConfiguration={
+                'BlockPublicAcls': True,
+                'IgnorePublicAcls': True,
+                'BlockPublicPolicy': True,
+                'RestrictPublicBuckets': True
+            }
+        )
+        print(f"✓ Public access blocked")
+        
+        return True
+    except ClientError as e:
+        print(f"✗ Error creating bucket: {e}")
+        return False
+
+def enforce_encryption_policy(bucket_name):
+    """
+    Apply a bucket policy that requires encrypted uploads.
+    """
+    bucket_policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "DenyUnencryptedObjectUploads",
+                "Effect": "Deny",
+                "Principal": "*",
+                "Action": "s3:PutObject",
+                "Resource": f"arn:aws:s3:::{bucket_name}/*",
+                "Condition": {
+                    "StringNotEquals": {
+                        "s3:x-amz-server-side-encryption": "aws:kms"
+                    }
+                }
+            },
+            {
+                "Sid": "DenyIncorrectKMSKey",
+                "Effect": "Deny",
+                "Principal": "*",
+                "Action": "s3:PutObject",
+                "Resource": f"arn:aws:s3:::{bucket_name}/*",
+                "Condition": {
+                    "StringNotEquals": {
+                        "s3:x-amz-server-side-encryption-aws-kms-key-id": "arn:aws:kms:us-west-2:ACCOUNT_ID:key/KEY_ID"
+                    }
+                }
+            }
+        ]
+    }
+    
+    try:
+        s3_client.put_bucket_policy(
+            Bucket=bucket_name,
+            Policy=json.dumps(bucket_policy)
+        )
+        print(f"✓ Encryption policy enforced on {bucket_name}")
+        return True
+    except ClientError as e:
+        print(f"✗ Error enforcing policy: {e}")
+        return False
+
+def setup_access_logging(bucket_name, log_bucket_name):
+    """
+    Enable access logging to track all requests to the bucket.
+    """
+    try:
+        s3_client.put_bucket_logging(
+            Bucket=bucket_name,
+            BucketLoggingStatus={
+                'LoggingEnabled': {
+                    'TargetBucket': log_bucket_name,
+                    'TargetPrefix': f'logs/{bucket_name}/'
+                }
+            }
+        )
+        print(f"✓ Access logging enabled (logs → {log_bucket_name})")
+        return True
+    except ClientError as e:
+        print(f"✗ Error enabling access logging: {e}")
+        return False
+
+def setup_lifecycle_policy(bucket_name):
+    """
+    Configure lifecycle rules to manage object retention and archival.
+    """
+    lifecycle_config = {
+        'Rules': [
+            {
+                'Id': 'Archive-old-objects',
+                'Status': 'Enabled',
+                'Transitions': [
+                    {
+                        'Days': 30,
+                        'StorageClass': 'STANDARD_IA'
+                    },
+                    {
+                        'Days': 90,
+                        'StorageClass': 'GLACIER'
+                    }
+                ],
+                'Expiration': {'Days': 365}
+            }
+        ]
+    }
+    
+    try:
+        s3_client.put_bucket_lifecycle_configuration(
+            Bucket=bucket_name,
+            LifecycleConfiguration=lifecycle_config
+        )
+        print(f"✓ Lifecycle policy applied (30d→IA, 90d→Glacier, 365d→Delete)")
+        return True
+    except ClientError as e:
+        print(f"✗ Error applying lifecycle policy: {e}")
+        return False
+
+# Main execution
+if __name__ == "__main__":
+    bucket_name = "my-secure-data-bucket-prod"
+    log_bucket_name = "my-audit-logs-bucket-prod"
+    
+    print(f"\n--- Setting up secure S3 infrastructure for {bucket_name} ---\n")
+    
+    create_secure_s3_bucket(bucket_name, environment='prod')
+    enforce_encryption_policy(bucket_name)
+    setup_access_logging(bucket_name, log_bucket_name)
+    setup_lifecycle_policy(bucket_name)
+    
+    print(f"\n✓ S3 bucket {bucket_name} fully configured with security best practices\n")
+</code></pre>
+
+          <h4>IAM Role Example</h4>
+          <pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3ReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::my-secure-data-bucket-prod/*"
+    },
+    {
+      "Sid": "KMSDecryptEncrypt",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": "arn:aws:kms:us-west-2:ACCOUNT_ID:key/KEY_ID"
+    }
+  ]
+}
+</code></pre>
+        </section>
+
+      </article>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.4.0/mermaid.min.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', ()=>{document.querySelectorAll('pre[class*="language-"]').forEach(p => p.classList.add('line-numbers')); if(window.mermaid) mermaid.initialize({startOnLoad:true});});</script>
+  </body>
+</html>

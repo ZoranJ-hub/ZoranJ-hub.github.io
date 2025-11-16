@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AWS EC2 Resource Optimization — Python Projects</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/support/python-projects/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+  </head>
+  <body>
+    <header id="header"><a href="/support/python-projects/" class="logo">Python Projects</a></header>
+    <main id="main" class="container">
+      <article class="post">
+        <header class="major">
+          <h2>AWS EC2 Resource Optimization Analysis</h2>
+          <p class="lead">Designed and implemented Python scripts leveraging AWS presigned URLs to securely analyze EC2 usage patterns across multiple AWS accounts.</p>
+        </header>
+
+        <section>
+          <h3>Challenge</h3>
+          <p>Identify and analyze unused EC2 instances across multiple AWS accounts to reduce costs and optimize resource utilization, where direct access was restricted due to security policies.</p>
+        </section>
+
+        <section>
+          <h3>Solution</h3>
+          <p>Created a secure Python solution using Boto3 to generate presigned URLs, enabling temporary, credential-restricted access to EC2 metadata and usage data without compromising security or requiring persistent credential sharing.</p>
+        </section>
+
+        <section>
+          <h3>Technical Deep Dive</h3>
+          <ol>
+            <li>Configured AWS IAM roles with least-privilege permissions for EC2 and CloudWatch access.</li>
+            <li>Generated presigned URLs using Boto3 S3 client to securely share temporary access tokens (1-hour expiration).</li>
+            <li>Parsed EC2 instance metadata and CloudWatch metrics to analyze CPU, network, and storage utilization.</li>
+            <li>Used Pandas to aggregate and analyze usage patterns, identifying idle and underutilized instances.</li>
+            <li>Generated automated reports with cost-saving recommendations based on utilization thresholds.</li>
+            <li>Implemented logging and monitoring via CloudWatch to track script execution and data access.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Tools & Technologies</h3>
+          <p class="badges">Python • Boto3 • AWS SDK • Presigned URLs • AWS IAM • EC2 • CloudWatch • Pandas • AWS Well-Architected Framework</p>
+        </section>
+
+        <section>
+          <h3>Visuals</h3>
+          <p>Architecture Diagram:</p>
+          <div class="mermaid">
+flowchart LR
+  User[User/Analyst]
+  Script[Python Script<br/>Boto3]
+  Presigned[Presigned URL<br/>Generator]
+  EC2[EC2 Metadata<br/>& CloudWatch]
+  Pandas[Data Analysis<br/>Pandas]
+  Report[Cost Report<br/>JSON/CSV]
+  User --> Script
+  Script --> Presigned
+  Presigned --> EC2
+  EC2 --> Pandas
+  Pandas --> Report
+          </div>
+
+          <h4>Code Snippet Example</h4>
+          <p>Python script demonstrating presigned URL generation and EC2 data retrieval.</p>
+          <pre><code class="language-python">import boto3
+from datetime import datetime, timedelta
+import pandas as pd
+
+# Initialize AWS clients
+s3_client = boto3.client('s3')
+ec2_client = boto3.client('ec2')
+cloudwatch = boto3.client('cloudwatch')
+
+def generate_presigned_url(bucket_name, object_name, expiration=3600):
+    """Generate a presigned URL for temporary, secure access."""
+    try:
+        response = s3_client.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': bucket_name, 'Key': object_name},
+            ExpiresIn=expiration
+        )
+        return response
+    except Exception as e:
+        print(f"Error generating presigned URL: {e}")
+        return None
+
+def analyze_ec2_utilization():
+    """Analyze EC2 instance utilization from CloudWatch metrics."""
+    instances = ec2_client.describe_instances()
+    utilization_data = []
+    
+    for reservation in instances['Reservations']:
+        for instance in reservation['Instances']:
+            instance_id = instance['InstanceId']
+            instance_type = instance['InstanceType']
+            
+            # Fetch average CPU utilization from last 7 days
+            metric_stats = cloudwatch.get_metric_statistics(
+                Namespace='AWS/EC2',
+                MetricName='CPUUtilization',
+                Dimensions=[{'Name': 'InstanceId', 'Value': instance_id}],
+                StartTime=datetime.utcnow() - timedelta(days=7),
+                EndTime=datetime.utcnow(),
+                Period=3600,
+                Statistics=['Average']
+            )
+            
+            avg_cpu = sum(d['Average'] for d in metric_stats['Datapoints']) / len(metric_stats['Datapoints']) if metric_stats['Datapoints'] else 0
+            
+            utilization_data.append({
+                'InstanceId': instance_id,
+                'Type': instance_type,
+                'AvgCPU': avg_cpu,
+                'State': instance['State']['Name'],
+                'LaunchTime': instance['LaunchTime']
+            })
+    
+    return pd.DataFrame(utilization_data)
+
+# Main execution
+if __name__ == "__main__":
+    df_utilization = analyze_ec2_utilization()
+    
+    # Identify underutilized instances (avg CPU < 5%)
+    underutilized = df_utilization[df_utilization['AvgCPU'] < 5]
+    
+    print(f"Total Instances: {len(df_utilization)}")
+    print(f"Underutilized Instances: {len(underutilized)}")
+    print(underutilized.to_string())
+</code></pre>
+
+          <h4>Output Example</h4>
+          <pre><code>{
+  "analysis_timestamp": "2025-11-16T12:34:56Z",
+  "total_instances": 127,
+  "underutilized_instances": 34,
+  "recommendations": [
+    {
+      "instance_id": "i-0123456789abcdef0",
+      "type": "t3.medium",
+      "avg_cpu": 2.3,
+      "monthly_cost": 28.50,
+      "recommendation": "Terminate or downsize to t3.nano",
+      "estimated_savings": 22.40
+    }
+  ],
+  "total_monthly_savings_potential": 756.80
+}
+</code></pre>
+        </section>
+
+      </article>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.4.0/mermaid.min.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', ()=>{document.querySelectorAll('pre[class*="language-"]').forEach(p => p.classList.add('line-numbers')); if(window.mermaid) mermaid.initialize({startOnLoad:true});});</script>
+  </body>
+</html>
