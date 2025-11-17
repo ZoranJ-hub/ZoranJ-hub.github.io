@@ -31,11 +31,11 @@
   <line x1="390" y1="140" x2="440" y2="140" stroke="#8bd3ff" stroke-width="2"/>
 
   <rect x="50" y="230" width="500" height="140" rx="8" fill="#0b1a2b" stroke="#234d6a"/>
-  <text x="75" y="255" font-size="14" fill="#8bd3ff" font-family="Helvetica" font-weight="700">OAuth2 & Webhook Integration</text>
+  <text x="75" y="255" font-size="14" fill="#8bd3ff" font-family="Helvetica" font-weight="700">OAuth2 &amp; Webhook Integration</text>
 
   <text x="80" y="280" font-size="12" fill="#dbeefc">• Webhook validation</text>
   <text x="80" y="300" font-size="12" fill="#dbeefc">• OAuth2 client flow</text>
-  <text x="80" y="320" font-size="12" fill="#dbeefc">• Retry, dead-letter & idempotency</text>
+  <text x="80" y="320" font-size="12" fill="#dbeefc">• Retry, dead-letter &amp; idempotency</text>
   <text x="80" y="340" font-size="12" fill="#dbeefc">• Async workers / job queues</text>
 
 </svg>
