@@ -31,7 +31,7 @@
           <ol>
             <li>Provisioned S3 buckets with default encryption (AWS KMS for sensitive data, SSE-S3 for standard data).</li>
             <li>Configured versioning on all buckets to maintain audit trails and enable rollback capabilities.</li>
-            <li>Implemented bucket policies using least-privilege IAM principles, blocking unencrypted uploads via `s3:x-amz-server-side-encryption` condition.</li>
+            <li>Implemented bucket policies using least-privilege IAM principles, blocking unencrypted uploads via the <code>s3:x-amz-server-side-encryption</code> condition.</li>
             <li>Enabled access logging to a centralized audit bucket with automatic expiration to manage storage costs.</li>
             <li>Created lifecycle rules to transition old objects to Glacier/Deep Archive and automatically delete expired data.</li>
             <li>Integrated CloudWatch monitoring with SNS notifications for unauthorized access attempts and policy violations.</li>
@@ -250,8 +250,18 @@ if __name__ == "__main__":
     print(f"\n✓ S3 bucket {bucket_name} fully configured with security best practices\n")
 </code></pre>
 
-          <h4>IAM Role Example</h4>
-          <pre><code class="language-json">{
+                    <h4>Output Example</h4>
+                    <pre><code class="language-json">{
+    "bucket": "my-secure-data-bucket-prod",
+    "encryption": "aws:kms",
+    "versioning": "Enabled",
+    "publicAccess": "Blocked",
+    "lifecycle": "30d→STANDARD_IA, 90d→GLACIER, 365d→Delete"
+}
+</code></pre>
+
+                    <h4>IAM Role Example</h4>
+                    <pre><code class="language-json">{
   "Version": "2012-10-17",
   "Statement": [
     {
